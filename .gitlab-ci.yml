@@ -1,0 +1,8 @@
+image: openjdk:21
+stages:
+  - build
+
+sanity-check:
+  stage: build
+  script:
+    - echo "Nothing to do"
