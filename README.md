@@ -25,11 +25,11 @@ Now clone that repo on to your system:
 ```bash
 $ git clone git@gitlab.com:USERNAME/2025-PAV-FirstName.git
 ```
-This will create a directory `2025-PAV-FirstName` in your computer. This is your local workspace dir.
+This will create a directory `2025-PAV-FirstName` in your system. This is your local workspace directory.
 
 ## Running
 
-To build the jar file of your project, cd to the directory where the pom.xml file exists and:
+To build the jar file of your project, cd to the location of the `pom.xml` file and run:
 ```
 mvn clean package
 ```
@@ -38,4 +38,4 @@ A jar file named `Analysis-jar-with-dependencies.jar` will be created inside the
 Run you project using:
 ```
 java -jar target/Analysis-jar-with-dependencies.jar dirname mainclass tclass tmethod
-```
+``` 

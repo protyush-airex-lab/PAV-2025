@@ -17,7 +17,7 @@ interface LatticeElement {
 
 	public boolean equals(LatticeElement r);
 
-	public LatticeElement tf_assignstmt(Stmt st);
+	public LatticeElement tf_assign(Stmt st);
 
-	public LatticeElement tf_condstmt(boolean b, Stmt st);
+	public LatticeElement tf_cond(boolean b, Stmt st);
 }

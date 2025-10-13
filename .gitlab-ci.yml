@@ -6,3 +6,4 @@ sanity-check:
   stage: build
   script:
     - mvn clean package
+    - if ! [ -f target/Analysis-jar-with-dependencies.jar ]; then exit 1; fi
