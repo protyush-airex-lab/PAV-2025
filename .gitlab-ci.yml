@@ -1,9 +1,14 @@
 image: jelastic/maven:3.9.5-openjdk-21
 stages:
   - build
+  - run
 
-sanity-check:
+maven-build:
   stage: build
   script:
     - mvn clean package
-    - if ! [ -f target/Analysis-jar-with-dependencies.jar ]; then exit 1; fi
+
+maven-run:
+  stage: run
+  script:
+    - mvn exec:java

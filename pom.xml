@@ -20,6 +20,12 @@
 		  <artifactId>soot</artifactId>
 		  <version>4.6.0</version>
 		</dependency>
+		<!-- To use SLF4J, which outputs all events to System.err -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>2.0.17</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -62,6 +68,22 @@
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- To run the main class directly from Maven -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<mainClass>pav.Analysis</mainClass>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
 						</goals>
 					</execution>
 				</executions>

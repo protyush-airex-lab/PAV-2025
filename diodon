@@ -1,1 +1,0 @@
-if ! [ -f target/Analysis-jar-with-dependencies.jar ]; then echo 1; else echo 0; fi

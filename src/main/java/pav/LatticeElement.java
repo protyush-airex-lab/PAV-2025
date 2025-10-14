@@ -1,5 +1,7 @@
 package pav;
 
+// Put your LatticeElement interface definition in this file
+
 import soot.jimple.Stmt;
 
 /* Receiver object of LatticeElement possess the existing dataflow fact at a program point.

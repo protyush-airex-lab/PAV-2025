@@ -1,15 +1,15 @@
 # PAV 2025 Course Project
 
 ## Objective
-To build a tool to statically perform analysis for JAVA programs.
+To build a tool to statically perform `Intraprocedural Point-to Analysis` for JAVA programs.
 
-We will use the static analysis framework Soot to build the analysis.
+We will use the static analysis framework [Soot](https://soot-oss.github.io/soot/) to build the analysis.
 
 ## Pre-requisites
 
-Make sure that your system has **Java 21** and **Maven** installed
+Make sure that your system has **Java 21**, **Maven** and **Graphviz** installed
 ```
-sudo apt install openjdk-21-jdk maven
+sudo apt install openjdk-21-jdk maven graphviz
 ```
 
 ## Repo initialization
@@ -27,15 +27,25 @@ $ git clone git@gitlab.com:USERNAME/2025-PAV-FirstName.git
 ```
 This will create a directory `2025-PAV-FirstName` in your system. This is your local workspace directory.
 
+## Public testcases
+The public testcase functions are provided in the folder `src/main/java/test/Test.java`
+
+You can add your own testcases in this file by creating them as functions inside the class `Test`
+
 ## Running
 
 To build the jar file of your project, cd to the location of the `pom.xml` file and run:
 ```
 mvn clean package
 ```
-A jar file named `Analysis-jar-with-dependencies.jar` will be created inside the `target` folder
 
-Run you project using:
+Now to run your analysis (in this case, generate the CFG for all of the functions inside the class `Test`), run:
 ```
-java -jar target/Analysis-jar-with-dependencies.jar dirname mainclass tclass tmethod
-``` 
+mvn exec:java
+```
+
+You will see the Jimple IR of all the methods in the class `Test` as output in your terminal.
+
+CFG graphs for all the methods will be generated as dot output files inside the folder `output/`
+
+If you have `graphviz` installed in your system, this will also generate PNG files from the dot files.

@@ -10,75 +10,26 @@ package pav;
 
 import java.util.*;
 import soot.options.Options;
-import soot.Unit;
 import soot.Scene;
-import soot.Body;
 import soot.SootClass;
 import soot.SootMethod;
-import soot.jimple.Stmt;
-import soot.UnitPrinter;
-import soot.NormalUnitPrinter;
-import soot.toolkits.graph.ExceptionalUnitGraph;
-import soot.toolkits.graph.ExceptionalBlockGraph;
-import soot.util.cfgcmd.CFGToDotGraph;
-import soot.util.dot.DotGraph;
-import soot.jimple.toolkits.callgraph.CallGraph;
-import soot.jimple.toolkits.callgraph.Edge;
 
-public class Analysis extends PAVBase {
-	private DotGraph dot = new DotGraph("callgraph");
-	private static HashMap<String, Boolean> visited = new HashMap<String, Boolean>();
-
-	public Analysis() {
-	}
-
-	private static void drawMethodDependenceGraph(SootMethod method) {
-		if (!method.isPhantom() && method.isConcrete()) {
-			Body body = method.retrieveActiveBody();
-			ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body);
-			
-			CFGToDotGraph cfgForMethod = new CFGToDotGraph();
-			cfgForMethod.drawCFG(graph);
-			DotGraph cfgDot =  cfgForMethod.drawCFG(graph);
-			cfgDot.plot(method.getName() + "cfg.dot");
-		}
-	}
-	
-	public static void printUnit(int lineno, Body b, Unit u) {
-		UnitPrinter up = new NormalUnitPrinter(b);
-		u.toString(up);
-		String linenostr = String.format("%02d", lineno) + ": ";
-		System.out.println(linenostr + up.toString());
-	}
-	
-	
-	private static void printInfo(SootMethod entryMethod) {
-		if (!entryMethod.isPhantom() && entryMethod.isConcrete()) {
-			Body body = entryMethod.retrieveActiveBody();
-	
-			int lineno = 0;
-			for (Unit u : body.getUnits()) {
-				if (!(u instanceof Stmt)) {
-					continue;
-				}
-				Stmt s = (Stmt) u;
-				printUnit(lineno, body, u);
-				lineno++;
-			}
-		}
-	}
-
+public class Analysis extends Base {
 	public static void doAnalysis(SootMethod targetMethod, List<SootMethod> targetClassMethods){
 		// Implement your analysis here
 	}
 
 	public static void main(String[] args) {
-		String targetDirectory=args[0];
-		String mClass=args[1];
-		String tClass=args[2];
-		String tMethod=args[3];
-		boolean methodFound=false;
-
+		String targetDirectory, tClass;
+		if(args.length == 0){
+			// Default values
+			targetDirectory = "target/classes/test/";
+			tClass = "Test";
+		}
+		else {
+			targetDirectory=args[0];
+			tClass=args[1];
+		}
 
 		List<String> procDir = new ArrayList<String>();
 		procDir.add(targetDirectory);
@@ -95,39 +46,30 @@ public class Analysis extends PAVBase {
 
 		Scene.v().loadNecessaryClasses();
 
-		SootClass entryClass = Scene.v().getSootClassUnsafe(mClass);
-		SootMethod entryMethod = entryClass.getMethodByNameUnsafe("main");
-		SootClass targetClass = Scene.v().getSootClassUnsafe(tClass);
-		SootMethod targetMethod = entryClass.getMethodByNameUnsafe(tMethod);
+		SootClass targetClass = Scene.v().getSootClass(tClass);
+		SootMethod entryMethod = targetClass.getMethodByName("main");
 
-		Options.v().set_main_class(mClass);
+		Options.v().set_main_class(tClass);
 		Scene.v().setEntryPoints(Collections.singletonList(entryMethod));
 
-		System.out.println("entryClass: " + entryClass.getName());
-		System.out.println("tclass: " + targetClass);
-		System.out.println("tmethod: " + targetMethod);
-		System.out.println("tmethodname: " + tMethod);
-		Iterator mi = targetClass.getMethods().iterator();
-		while (mi.hasNext()) {
-			SootMethod sm = (SootMethod)mi.next();
-			// System.out.println("method: " + sm);
-			if(sm.getName().equals(tMethod)) {
-				methodFound = true;
-				break;
-			}
-		}
-
-		if(methodFound) {
-			printInfo(targetMethod);
+		System.out.println("Target Class: " + targetClass);
 		
-			for (SootMethod method : targetClass.getMethods()) {
-				drawMethodDependenceGraph(targetMethod);
+		for (SootMethod method : targetClass.getMethods()) {
+			// Skip drawing CFG for the class constructor
+			if (method.getName().equals("<init>")) {
+				continue;
 			}
-			
+
+			// Print the method body
+			System.out.println("\n\nMethod: " + method.getName());
+			printInfo(method);
+
+			// Draw the CFG for each method in the target class
+			// You can comment this line if you do not want to generate the CFGs
+			drawMethodDependenceGraph(method);
+
 			// The function doAnalysis is the entry point for the Kildall's fix-point algorithm over the LatticeElement.
-			doAnalysis(targetMethod, targetClass.getMethods());
-		} else {
-			System.out.println("Method not found: " + tMethod);
+			doAnalysis(method, targetClass.getMethods());
 		}
 	}
 }
