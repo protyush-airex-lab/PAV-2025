@@ -1,7 +1,7 @@
 # PAV 2025 Course Project
 
 ## Objective
-To build a tool to statically perform `Intraprocedural Point-to Analysis` for JAVA programs.
+To build a tool to statically perform `Intra-procedural Point-to Analysis` for JAVA programs.
 
 We will use the static analysis framework [Soot](https://soot-oss.github.io/soot/) to build the analysis.
 

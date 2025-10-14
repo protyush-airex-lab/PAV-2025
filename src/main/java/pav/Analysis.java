@@ -65,7 +65,6 @@ public class Analysis extends Base {
 			printInfo(method);
 
 			// Draw the CFG for each method in the target class
-			// You can comment this line if you do not want to generate the CFGs
 			drawMethodDependenceGraph(method);
 
 			// The function doAnalysis is the entry point for the Kildall's fix-point algorithm over the LatticeElement.

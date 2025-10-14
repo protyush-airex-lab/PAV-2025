@@ -16,9 +16,9 @@
 	<dependencies>
 		<!-- To use Soot's framework for Analysis -->
 		<dependency>
-		  <groupId>org.soot-oss</groupId>
-		  <artifactId>soot</artifactId>
-		  <version>4.6.0</version>
+			<groupId>org.soot-oss</groupId>
+			<artifactId>soot</artifactId>
+			<version>4.6.0</version>
 		</dependency>
 		<!-- To use SLF4J, which outputs all events to System.err -->
 		<dependency>
