@@ -34,14 +34,9 @@ You can add your own testcases in this file by creating them as functions inside
 
 ## Running
 
-To build the jar file of your project, cd to the location of the `pom.xml` file and run:
+To build and run your analysis (in this case, generate the CFG for all of the functions inside the class `Test`), cd to the location of the `pom.xml` file and run:
 ```
-mvn clean package
-```
-
-Now to run your analysis (in this case, generate the CFG for all of the functions inside the class `Test`), run:
-```
-mvn exec:java
+mvn -q clean package exec:java
 ```
 
 You will see the Jimple IR of all the methods in the class `Test` as output in your terminal.

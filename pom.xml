@@ -88,6 +88,28 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- For cleaning output files along with target folder -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.5.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>output</directory>
+							<includes>
+								<include>*.dot</include>
+								<include>*.png</include>
+								<include>*.txt</include>
+							</includes>
+							<excludes>
+								<exclude>.gitignore</exclude>
+							</excludes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>

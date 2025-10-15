@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import soot.Body;
 import soot.NormalUnitPrinter;
 import soot.SootMethod;
@@ -29,6 +32,11 @@ public class Base {
 			this.v = varname;
 			this.pV = pointerValues;
 		}
+	}
+
+	// Logger for logging messages
+	public class SLF4J {
+		public static Logger LOGGER = LoggerFactory.getLogger(SLF4J.class);
 	}
 
 	// Protected functions for formatting output
