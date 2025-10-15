@@ -28,7 +28,9 @@ $ git clone git@gitlab.com:USERNAME/2025-PAV-FirstName.git
 This will create a directory `2025-PAV-FirstName` in your system. This is your local workspace directory.
 
 ## Public testcases
-The public testcase functions are provided in the folder `src/main/java/test/Test.java`
+The public testcases are provided in the folder `src/main/java/test/Test.java`
+
+For your reference, the expected outputs for these public testcases are also given in the folder `output/` with the extension ".output-expected.txt"
 
 You can add your own testcases in this file by creating them as functions inside the class `Test`
 
@@ -36,7 +38,7 @@ You can add your own testcases in this file by creating them as functions inside
 
 To build and run your analysis (in this case, generate the CFG for all of the functions inside the class `Test`), cd to the location of the `pom.xml` file and run:
 ```
-mvn -q clean package exec:java
+mvn clean package exec:java -q
 ```
 
 You will see the Jimple IR of all the methods in the class `Test` as output in your terminal.

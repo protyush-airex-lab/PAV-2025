@@ -86,6 +86,15 @@
 							<goal>java</goal>
 						</goals>
 					</execution>
+					<execution>
+						<id>test</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>test.Test</mainClass>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<!-- For cleaning output files along with target folder -->
@@ -104,6 +113,7 @@
 							</includes>
 							<excludes>
 								<exclude>.gitignore</exclude>
+								<exclude>*.output-expected.txt</exclude>
 							</excludes>
 							<followSymlinks>false</followSymlinks>
 						</fileset>
