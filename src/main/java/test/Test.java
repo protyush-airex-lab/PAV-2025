@@ -1,9 +1,5 @@
 package test;
 
-/* In case you need to run the main function in the Test class, use the command
- *		mvn clean package exec:java@test -q
- */
-
  public class Test {
 	Test f;
 
@@ -47,16 +43,16 @@ package test;
 		b.f = c;
 		// a: {new37}, b: {new39}, c: {new41}, new39.f: {new41}
 		while(value < 100) {
-			// a: {new37}, b: {new39, new47}, c: {new41}, new39.f: {new41, new47}, new47.f: {new47}
+			// a: {new37}, b: {new39, new41, new47}, c: {new41}, new39.f: {new41, new47}, new41.f: {new47}, new47.f: {new47}
 			b.f = new Test();
-			// a: {new37}, b: {new39}, c: {new41}, new39.f: {new47}, new47.f: {new47}
+			// a: {new37}, b: {new39, new41, new47}, c: {new41}, new39.f: {new41, new47}, new41.f: {new47}, new47.f: {new47}
 			b = b.f;
-			// a: {new37}, b: {new47}, c: {new41}, new39.f: {new47}, new47.f: {new47}
 			value += 1;
-			// a: {new37}, b: {new47}, c: {new41}, new39.f: {new47}, new47.f: {new47}
+			// a: {new37}, b: {new41, new47}, c: {new41}, new39.f: {new41, new47}, new41.f: {new47}, new47.f: {new47}
 		}
+		// a: {new37}, b: {new39, new41, new47}, c: {new41}, new39.f: {new41, new47}, new41.f: {new47}, new47.f: {new47}
 		c.f = b.f;
-		// a: {new37}, b: {new39}, c: {new41}, new39.f: {new41, new47}, new41.f: {new41, new47}
+		// a: {new37}, b: {new39, new47}, c: {new41}, new39.f: {new41, new47}, new41.f: {new41, new47}
 	}
 
 	@SuppressWarnings("null")
@@ -172,6 +168,9 @@ package test;
 	}
 
 	public static void main(String[] args) {
+		/* In case you need to run the main function in the Test class, use the command
+		 *		mvn clean package exec:java@test -q
+		 */
 		System.out.println("Running Test");
 		public_01();
 		public_02(0);
