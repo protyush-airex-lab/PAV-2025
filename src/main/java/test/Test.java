@@ -47,6 +47,7 @@ package test;
 			b.f = new Test();
 			// a: {new37}, b: {new39, new41, new47}, c: {new41}, new39.f: {new41, new47}, new41.f: {new47}, new47.f: {new47}
 			b = b.f;
+			// a: {new37}, b: {new41, new47}, c: {new41}, new39.f: {new41, new47}, new41.f: {new47}, new47.f: {new47}
 			value += 1;
 			// a: {new37}, b: {new41, new47}, c: {new41}, new39.f: {new41, new47}, new41.f: {new47}, new47.f: {new47}
 		}
@@ -57,114 +58,122 @@ package test;
 
 	@SuppressWarnings("null")
 	static void public_04(int value) {
-		Test a;
+		Test a = null;
 		// a: {null}
 		Test b = new Test();
-		// a: {null}, b: {new62}
+		// a: {null}, b: {new63}
 		Test c = new Test();
-		// a: {null}, b: {new62}, c: {new64}
+		// a: {null}, b: {new63}, c: {new65}
 		Test d = new Test();
-		// a: {null}, b: {new62}, c: {new64}, d: {new66}
+		// a: {null}, b: {new63}, c: {new65}, d: {new67}
 		b.f = null;
-		// a: {null}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null}
+		// a: {null}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null}
 		c.f = d;
-		// a: {null}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null}, new64.f: {new66}
+		// a: {null}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null}, new65.f: {new67}
 		if(value == 100) {
-			// a: {null}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null}, new64.f: {new66}
+			// a: {null}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null}, new65.f: {new67}
 			a = b;
-			// a: {new62}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null}, new64.f: {new66}
+			// a: {new63}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null}, new65.f: {new67}
 		}
 		else if (value == 200) {
-			// a: {null}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null}, new64.f: {new66}
+			// a: {null}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null}, new65.f: {new67}
 			a = c;
-			// a: {new64}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null}, new64.f: {new66}
+			// a: {new65}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null}, new65.f: {new67}
 		}
 		else {
-			// a: {null}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null}, new64.f: {new66}
+			// a: {null}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null}, new65.f: {new67}
 			a = null;
-			// a: {null}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null}, new64.f: {new66}
+			// a: {null}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null}, new65.f: {new67}
 		}
-		// a: {null, new62, new64}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null}, new64.f: {new66}
+		// a: {null, new63, new65}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null}, new65.f: {new67}
 
 		Test m = a.f;
-		// a: {null, new62, new64}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null}, new64.f: {new66}, m: {null, new66}
+		// a: {null, new63, new65}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null}, new65.f: {new67}, m: {null, new67}
 		Test n = new Test();
-		// a: {null, new62, new64}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null}, new64.f: {new66}, m: {null, new66}, n: {new91}
+		// a: {null, new63, new65}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null}, new65.f: {new67}, m: {null, new67}, n: {new92}
 		a.f = n;
-		// a: {null, new62, new64}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null, new91}, new64.f: {new66, new91}, m: {null, new66}, n: {new91}
+		// a: {null, new63, new65}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null, new92}, new65.f: {new67, new92}, m: {null, new67}, n: {new92}
 		m = a.f;
-		// a: {null, new62, new64}, b: {new62}, c: {new64}, d: {new66}, new62.f: {null, new91}, new64.f: {new66, new91}, m: {null, new66, new91}, n: {new91}
+		// a: {null, new63, new65}, b: {new63}, c: {new65}, d: {new67}, new63.f: {null, new92}, new65.f: {new67, new92}, m: {null, new67, new92}, n: {new92}
 	}
 
 	static void public_05(int i) {
 		int[] a = new int[3];
-		// a: {new100}
+		// a: {new101}
 		int[] b = new int[4];
-		// a: {new100}, b: {new102}
+		// a: {new101}, b: {new103}
 		int[] c;
-		// a: {new100}, b: {new102}, c: {null}
+		// a: {new101}, b: {new103}
 		if(i > 0) {
-			// a: {new100}, b: {new102}, c: {null}
+			// a: {new101}, b: {new103}
 			c = a;
-			// a: {new100}, b: {new102}, c: {new100}
+			// a: {new101}, b: {new103}, c: {new101}
 		}
 		else {
-			// a: {new100}, b: {new102}, c: {null}
+			// a: {new101}, b: {new103}
 			c = b;
-			// a: {new100}, b: {new102}, c: {new102}
+			// a: {new101}, b: {new103}, c: {new103}
 		}
-		// a: {new100}, b: {new102}, c: {new100, new102}
+		// a: {new101}, b: {new103}, c: {new101, new103}
+		c[0] = 1;
+		// a: {new101}, b: {new103}, c: {new101, new103}
 	}
 
 	static void public_06() {
 		Test a = new Test();
-		// a: {new120}
+		// a: {new123}
 		Test b = a;
-		// a: {new120}, b: {new120}
+		// a: {new123}, b: {new123}
 		Test c = new Test();
-		// a: {new120}, b: {new120}, c: {new124}
-		Test d = null;
-		// a: {new120}, b: {new120}, c: {new124}, d: {null}
+		// a: {new123}, b: {new123}, c: {new127}
+		Test d;
+		// a: {new123}, b: {new123}, c: {new127}
 		if(a == b) {
-			// a: {new120}, b: {new120}, c: {new124}, d: {null}
+			// a: {new123}, b: {new123}, c: {new127}
 			d = a;
-			// a: {new120}, b: {new120}, c: {new124}, d: {new120}
+			// a: {new123}, b: {new123}, c: {new127}, d: {new123}
 		}
 		else {
-			// a: {new120}, b: {new120}, c: {new124}, d: {null}
+			// a: {new123}, b: {new123}, c: {new127}
 			d = c;
-			// a: {new120}, b: {new120}, c: {new124}, d: {new124}
+			// a: {new123}, b: {new123}, c: {new127}, d: {new127}
 		}
-		// a: {new120}, b: {new120}, c: {new124}, d: {new120, new124}
+		// a: {new123}, b: {new123}, c: {new127}, d: {new123, new127}
+		d.f = b;
+		// a: {new123}, b: {new123}, c: {new127}, d: {new123, new127}, new123.f: {new123}, new127.f: {new123}
 	}
 
 	static void public_07(int i) {
 		Test a = new Test();
-		// a: {new142}
+		// a: {new147}
 		Test b = new Test();
-		// a: {new142}, b: {new144}
+		// a: {new147}, b: {new149}
+		Test c;
+		// a: {new147}, b: {new149}
 		if(i > 0) {
-			// a: {new142}, b: {new144}
+			// a: {new147}, b: {new149}
 			b.f = a;
-			// a: {new142}, b: {new144}, new144.f: {new142}
+			// a: {new147}, b: {new149}, new149.f: {new147}
 		}
 		else {
-			// a: {new142}, b: {new144}
+			// a: {new147}, b: {new149}
 			b.f = b;
-			// a: {new142}, b: {new144}, new144.f: {new144}
+			// a: {new147}, b: {new149}, new149.f: {new149}
 		}
-		// a: {new142}, b: {new144}, new144.f: {new142, new144}
+		// a: {new147}, b: {new149}, new149.f: {new147, new149}
 		if(a == b.f) {
-			// a: {new142}, b: {new144}, new144.f: {new142}
+			// a: {new147}, b: {new149}, new149.f: {new147, new149}
 			a.f = b.f;
-			// a: {new142}, b: {new144}, new142.f: {new142}, new144.f: {new142}
+			// a: {new147}, b: {new149}, new147.f: {new147, new149}, new149.f: {new147}
 		}
 		else {
-			// a: {new142}, b: {new144}, new144.f: {new144}
+			// a: {new147}, b: {new149}, new149.f: {new147, new149}
 			a.f = b;
-			// a: {new142}, b: {new144}, new142.f: {new144}, new144.f: {new144}
+			// a: {new147}, b: {new149}, new147.f: {new149}, new149.f: {new149}
 		}
-		// a: {new142}, b: {new144}, new142.f: {new144}, new144.f: {new144}
+		// a: {new147}, b: {new149}, new147.f: {new147, new149}, new149.f: {new147, new149}
+		c = a.f;
+		// a: {new147}, b: {new149}, new147.f: {new147, new149}, new149.f: {new147, new149}, c: {new147, new149}
 	}
 
 	public static void main(String[] args) {
