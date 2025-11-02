@@ -1,49 +1,116 @@
-# PAV 2025 Course Project
-# To check the local time hack
+# README — What we implemented in `Analysis.java`
 
-## Objective
-To build a tool to statically perform `Intra-procedural Point-to Analysis` for JAVA programs.
+## Overview
 
-We will use the static analysis framework [Soot](https://soot-oss.github.io/soot/) to build the analysis.
+We implemented an **intra-procedural, path-insensitive MAY points-to analysis** for Java programs using Soot. The solver is a classic **Kildall worklist** over a lattice, and all analysis-specific state lives in a concrete immutable fact class that **implements the `LatticeElement` interface**. We followed the boilerplate constraints: **no new files**, **no edits to `LatticeElement.java` or `Base.java`** beyond their existing content.
 
-## Pre-requisites
+## What changed (at a glance)
 
-Make sure that your system has **Java 21**, **Maven** and **Graphviz** installed
-```
-sudo apt install openjdk-21-jdk maven graphviz
-```
+* Added a nested **`PointsToFact implements LatticeElement`** inside `pav.Analysis`.
+* Implemented a **worklist solver** in `doAnalysis(...)` using Soot’s `BriefUnitGraph`.
+* Implemented **transfer functions** for Jimple assignments, field/array reads and writes, `new`/array allocation, `null`, and (path-insensitive) conditionals.
+* Implemented **stable allocation IDs** (`new00`, `new01`, …) per unit index to match expected outputs.
+* Emission tweaks:
 
-## Repo initialization
+  * Emit **OUT** facts (not IN) to align with expected line numbers.
+  * **Skip the final unit** (the return) to avoid an extra duplicate line.
+  * Custom `writeOutput(...)` to **avoid the trailing comma** in sets.
 
-Do not clone this repo directly. You will not be able to push changes.
+## Design Details
 
-Instead "Fork" this repo under your username. Name it as "2025-PAV-FirstName"
-(eg: "2025-PAV-Alvin").
+### 1) Concrete lattice fact (`PointsToFact`)
 
-Make the fork you created as **Private**. Then give access to Alan (@AlanJojo) and Atharv (@atharv.desai) to this repository as **Developers**.
+A nested, immutable class that **implements `LatticeElement`**:
 
-Now clone that repo on to your system:
+* **Domain (carrier set)**
+
+  * `varPts: Map<String, Set<String>>` — locals → abstract objects
+  * `heapPts: Map<String, Set<String>>` — heap slots `"obj.f"` / `"obj.[]"` → abstract objects
+    *(arrays are modeled via a pseudo-field `"[]"`)*
+* **Bottom (⊥)**: all maps empty (`{}`).
+* **Join (⊔)**: pointwise **set union** on both maps; returns a **fresh** fact.
+* **Equality**: structural equality of the two maps.
+* **Immutability**: every operation returns a **new fact**; the receiver is never mutated (as required by the interface comments).
+
+### 2) Transfer functions (path-insensitive)
+
+Implemented through the `LatticeElement` API:
+
+* **Local assign** `x = R` (pointer-typed):
+
+  * **Strong update**: overwrite `varPts[x] = eval(R)`.
+* **Field write** `x.f = R`:
+
+  * **Weak update**: for each object `o ∈ pts(x)`, do `heapPts[o.f] ∪= eval(R)` (skip `o = null`).
+* **Array write** `a[i] = R`:
+
+  * **Weak update** on `o."[]"` for each `o ∈ pts(a)`.
+* **Field read** `x = y.f`:
+
+  * `varPts[x] = ⋃_{o∈pts(y), o≠null} heapPts[o.f]`; if `y` may be `null`, include `"null"`.
+* **Array read** `x = a[i]`:
+
+  * `varPts[x] = ⋃_{o∈pts(a), o≠null} heapPts[o."[]"]`; include `"null"` if base may be `null`.
+* **Allocation** (`new`, `new[]`, `new[][]`, or ref-returning call):
+
+  * `eval(R) = { newXX }` where `newXX` comes from a unit-indexed, stable **allocation ID**.
+* **Null**:
+
+  * Modeled as the distinguished abstract location `"null"`.
+* **Conditionals** `tf_cond(...)`:
+
+  * **Identity** (Phase-1 path-insensitive).
+
+### 3) Allocation IDs: `new%02d`
+
+We precompute a **stable mapping** from the **Jimple unit index** to IDs like `new00`, `new01`, … (including ref-returning calls). This mirrors the gaps/patterns in the provided expected outputs.
+
+### 4) Kildall worklist solver (`doAnalysis`)
+
+* Build CFG: `BriefUnitGraph(body)`.
+* Initialize all `IN`/`OUT` to ⊥.
+* Iterate in a worklist:
+
+  * `IN[n] = ⊔ OUT[p]` over predecessors (using only `join_op`).
+  * `OUT[n] = transfer(IN[n], stmt_n)` via `tf_assign`/`tf_cond`.
+  * Re-enqueue successors when `OUT` changes.
+* **Emit OUT facts** (not IN) with the “inNN” labels to match expected files.
+  Also **skip the last unit** (the return), which otherwise duplicates the previous line.
+
+### 5) Output formatting & files
+
+* We bypass `Base.formatOutputLine(...)` and format lines ourselves in `writeOutput(...)`:
+
+  * Avoids the **trailing comma** inside `{ … }`.
+  * Keeps global line ordering sorted (like before).
+* Output file path:
+
+  * `output/<Class>.<method>.output.txt` (same naming scheme as expected).
+
+## What we did **not** implement (by scope)
+
+* **Inter-procedural** reasoning (no summaries; ref returns are modeled as fresh allocs).
+* **Static fields** (only locals, instance fields, arrays).
+* **Path sensitivity** (single fact per program point).
+* Other Java features beyond what the public tests exercise.
+
+## How to build & run
+
 ```bash
-$ git clone git@gitlab.com:USERNAME/2025-PAV-FirstName.git
-```
-This will create a directory `2025-PAV-FirstName` in your system. This is your local workspace directory.
-
-## Public testcases
-The public testcases are provided in the folder `src/main/java/test/Test.java`
-
-For your reference, the expected outputs for these public testcases are also given in the folder `output/` with the extension ".output-expected.txt"
-
-You can add your own testcases in this file by creating them as functions inside the class `Test`
-
-## Running
-
-To build and run your analysis (in this case, generate the CFG for all of the functions inside the class `Test`), cd to the location of the `pom.xml` file and run:
-```
 mvn clean package exec:java -q
 ```
 
-You will see the Jimple IR of all the methods in the class `Test` as output in your terminal.
+* Soot Jimple bodies are printed to the console (as before).
+* CFGs are emitted to `output/*.dot` (and `*.png` if Graphviz is installed).
+* Analysis results: `output/Test.public_0N.output.txt`.
+  Compare against the provided `*.output-expected.txt`.
 
-CFG graphs for all the methods will be generated as dot output files inside the folder `output/`
+## Files touched
 
-If you have `graphviz` installed in your system, this will also generate PNG files from the dot files.
+* **Edited:** `src/main/java/pav/Analysis.java`
+  (added nested `PointsToFact`, solver, allocation-ID precompute, custom output writer)
+* **Unchanged:** `src/main/java/pav/LatticeElement.java` (interface only), `src/main/java/pav/Base.java` (helpers)
+
+---
+
+**Summary:** The solver is lattice-agnostic and uses only the `LatticeElement` contract. The concrete points-to lattice is implemented as an immutable nested class, with stable allocation IDs and transfer functions sufficient to match the expected public outputs.
