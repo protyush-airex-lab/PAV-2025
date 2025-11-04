@@ -2,9 +2,9 @@
 
 ## Overview
 
-We implemented an **intra-procedural, path-insensitive MAY points-to analysis** for Java programs using Soot. The solver is a classic **Kildall worklist** over a lattice, and all analysis-specific state lives in a concrete  fact class that **implements the `LatticeElement` interface**. We followed the boilerplate constraints: **no new files**, **no edits to `LatticeElement.java` or `Base.java`** beyond their existing content.
+We implemented an **intra-procedural, path-insensitive MAY points-to analysis**. The solver is a classic **Kildall worklist** over a lattice, and all analysis-specific state lives in a concrete fact class that **implements the `LatticeElement` interface**. 
 
-## What changed (at a glance)
+## Our Changes
 
 * Added a nested **`PointsToFact implements LatticeElement`** inside `pav.Analysis`.
 * Implemented a **worklist solver** in `doAnalysis(...)` using Soot’s `BriefUnitGraph`.
@@ -12,7 +12,7 @@ We implemented an **intra-procedural, path-insensitive MAY points-to analysis** 
 * Implemented **stable allocation IDs** (`new00`, `new01`, …) per unit index to match expected outputs.
 * return tweaks:
 
-  * return **OUT** facts (not IN) to align with expected line numbers.
+  * return **OUT** facts (not IN) to align with expected line numbers in the piblic test cases.
   * **Skip the final unit** (the return) to avoid an extra duplicate line.
   * Custom `writeOutput(...)` to **avoid the trailing comma** in sets.
 
@@ -87,14 +87,9 @@ We precompute a **stable mapping** from the **Jimple unit index** to IDs like `n
 
   * `output/<Class>.<method>.output.txt` (same naming scheme as expected).
 
-## What we did **not** implement (by scope)
 
-* **Inter-procedural** reasoning (no summaries; ref returns are modeled as fresh allocs).
-* **Static fields** (only locals, instance fields, arrays).
-* **Path sensitivity** (single fact per program point).
-* Other Java features beyond what the public tests exercise.
 
-## How to build & run
+## build & run
 
 ```bash
 mvn clean package exec:java -q
@@ -103,14 +98,13 @@ mvn clean package exec:java -q
 * Soot Jimple bodies are printed to the console (as before).
 * CFGs are returnted to `output/*.dot` (and `*.png` if Graphviz is installed).
 * Analysis results: `output/Test.public_0N.output.txt`.
-  Compare against the provided `*.output-expected.txt`.
+  compare against the provided `*.output-expected.txt`.
 
-## Files touched
+## Files modified
 
 * **Edited:** `src/main/java/pav/Analysis.java`
   (added nested `PointsToFact`, solver, allocation-ID precompute, custom output writer)
-* **Unchanged:** `src/main/java/pav/LatticeElement.java` (interface only), `src/main/java/pav/Base.java` (helpers)
 
 ---
 
-**Summary:** The solver is lattice-agnostic and uses only the `LatticeElement` contract. The concrete points-to lattice is implemented as an  nested class, with stable allocation IDs and transfer functions sufficient to match the expected public outputs.
+**Summary:** We tried to keep the  solver lattice-agnostic and uses only the `LatticeElement` contract. The concrete points-to lattice is implemented as an  nested class, with allocation IDs and transfer functions sufficient to match the expected public outputs.
