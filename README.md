@@ -2,7 +2,7 @@
 
 ## Overview
 
-We implemented an **intra-procedural, path-insensitive MAY points-to analysis** for Java programs using Soot. The solver is a classic **Kildall worklist** over a lattice, and all analysis-specific state lives in a concrete immutable fact class that **implements the `LatticeElement` interface**. We followed the boilerplate constraints: **no new files**, **no edits to `LatticeElement.java` or `Base.java`** beyond their existing content.
+We implemented an **intra-procedural, path-insensitive MAY points-to analysis** for Java programs using Soot. The solver is a classic **Kildall worklist** over a lattice, and all analysis-specific state lives in a concrete  fact class that **implements the `LatticeElement` interface**. We followed the boilerplate constraints: **no new files**, **no edits to `LatticeElement.java` or `Base.java`** beyond their existing content.
 
 ## What changed (at a glance)
 
@@ -10,9 +10,9 @@ We implemented an **intra-procedural, path-insensitive MAY points-to analysis** 
 * Implemented a **worklist solver** in `doAnalysis(...)` using Soot’s `BriefUnitGraph`.
 * Implemented **transfer functions** for Jimple assignments, field/array reads and writes, `new`/array allocation, `null`, and (path-insensitive) conditionals.
 * Implemented **stable allocation IDs** (`new00`, `new01`, …) per unit index to match expected outputs.
-* Emission tweaks:
+* return tweaks:
 
-  * Emit **OUT** facts (not IN) to align with expected line numbers.
+  * return **OUT** facts (not IN) to align with expected line numbers.
   * **Skip the final unit** (the return) to avoid an extra duplicate line.
   * Custom `writeOutput(...)` to **avoid the trailing comma** in sets.
 
@@ -20,7 +20,7 @@ We implemented an **intra-procedural, path-insensitive MAY points-to analysis** 
 
 ### 1) Concrete lattice fact (`PointsToFact`)
 
-A nested, immutable class that **implements `LatticeElement`**:
+A nested,  class that **implements `LatticeElement`**:
 
 * **Domain (carrier set)**
 
@@ -74,7 +74,7 @@ We precompute a **stable mapping** from the **Jimple unit index** to IDs like `n
   * `IN[n] = ⊔ OUT[p]` over predecessors (using only `join_op`).
   * `OUT[n] = transfer(IN[n], stmt_n)` via `tf_assign`/`tf_cond`.
   * Re-enqueue successors when `OUT` changes.
-* **Emit OUT facts** (not IN) with the “inNN” labels to match expected files.
+* **return OUT facts** (not IN) with the “inNN” labels to match expected files.
   Also **skip the last unit** (the return), which otherwise duplicates the previous line.
 
 ### 5) Output formatting & files
@@ -101,7 +101,7 @@ mvn clean package exec:java -q
 ```
 
 * Soot Jimple bodies are printed to the console (as before).
-* CFGs are emitted to `output/*.dot` (and `*.png` if Graphviz is installed).
+* CFGs are returnted to `output/*.dot` (and `*.png` if Graphviz is installed).
 * Analysis results: `output/Test.public_0N.output.txt`.
   Compare against the provided `*.output-expected.txt`.
 
@@ -113,4 +113,4 @@ mvn clean package exec:java -q
 
 ---
 
-**Summary:** The solver is lattice-agnostic and uses only the `LatticeElement` contract. The concrete points-to lattice is implemented as an immutable nested class, with stable allocation IDs and transfer functions sufficient to match the expected public outputs.
+**Summary:** The solver is lattice-agnostic and uses only the `LatticeElement` contract. The concrete points-to lattice is implemented as an  nested class, with stable allocation IDs and transfer functions sufficient to match the expected public outputs.

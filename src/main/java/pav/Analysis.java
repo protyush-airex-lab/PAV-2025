@@ -42,14 +42,14 @@ import soot.toolkits.graph.UnitGraph;
 public class Analysis extends Base {
 
 	/* ---------------------------------------------------------
-	 * Concrete, immutable lattice fact for MAY points-to (intra)
+	 * Concrete lattice fact for MAY points-to (intra)
 	 * --------------------------------------------------------- */
 	static final class PointsToFact implements LatticeElement {
 		// locals -> {abstract objects}
 		private final Map<String, Set<String>> varPts;
 		// heap slots "obj.f" or "obj.[]" -> {abstract objects}
 		private final Map<String, Set<String>> heapPts;
-		// local name -> type (for filtering at emission)
+		// local name -> type (for filtering at return)
 		private final Map<String, Type> localTypes;
 		// Stable mapping Unit-> "new%02d" (based on unit index)
 		private final Map<Unit, String> allocIds;
@@ -70,7 +70,7 @@ public class Analysis extends Base {
 			return new PointsToFact(new HashMap<>(), new HashMap<>(), lt, allocIds);
 		}
 
-		/* -------- Lattice ops (immutable) -------- */
+		/* -------- Lattice ops () -------- */
 
 		@Override
 		public LatticeElement join_op(LatticeElement r) {
@@ -197,7 +197,7 @@ public class Analysis extends Base {
 			return Collections.emptySet();
 		}
 
-		/* -------- Immutable updates / lookups -------- */
+		/* --------  updates / lookups -------- */
 
 		private PointsToFact strongLocal(String x, Set<String> rhs) {
 			Map<String, Set<String>> v = copyOf(varPts);
@@ -262,7 +262,7 @@ public class Analysis extends Base {
 			return s;
 		}
 
-		/* -------- Emission for grading -------- */
+		/* -------- return for grading -------- */
 
 		Set<Base.ResultTuple> toTuples(String methodQualified, String inLabel) {
 			Set<Base.ResultTuple> out = new HashSet<>();
@@ -291,7 +291,6 @@ public class Analysis extends Base {
 	/* ------------------------------------
 	 * Stable allocation IDs: "new%02d"
 	 * Based on the unit's source-order index.
-	 * This matches the expected jumps (new00, new02, ...).
 	 * ------------------------------------ */
 	private static Map<Unit, String> precomputeAllocIds(Body body) {
 		Map<Unit, String> ids = new HashMap<>();
@@ -405,7 +404,7 @@ private static void writeOutput(SootMethod m, Set<Base.ResultTuple> tuples) {
 			}
 		}
 
-		// Emit facts (skip the final return's OUT to match expected lines)
+		// return facts (skip the final return's OUT to match expected lines)
 		Set<Base.ResultTuple> tuples = new HashSet<>();
 		String mname = targetMethod.getDeclaringClass().getShortName() + "." + targetMethod.getName();
 
@@ -424,7 +423,7 @@ private static void writeOutput(SootMethod m, Set<Base.ResultTuple> tuples) {
 		writeOutput(targetMethod, tuples);
 
 
-		// // Emit facts at OUT of each unit
+		// // return facts at OUT of each unit
 		// Set<Base.ResultTuple> tuples = new HashSet<>();
 		// String mname = targetMethod.getDeclaringClass().getShortName() + "." + targetMethod.getName();
 		// for (Unit u : body.getUnits()) {
